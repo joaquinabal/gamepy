@@ -1,0 +1,77 @@
+from doctest import FAIL_FAST
+import pygame
+from constantes import *
+from auxiliar import Auxiliar
+from player import Player
+
+class Enemy():
+    def __init__(self,x,y,speed_walk,speed_run,gravity,frame_rate_ms,move_rate_ms, x_length):
+        self.walk_r = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/stink/walk.png",15,1)[:12]
+        self.walk_l = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/stink/walk.png",15,1,True)[:12]
+        self.stay_r = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/stink/idle.png",16,1)
+        self.stay_l = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/stink/idle.png",16,1, True)     
+        self.jump_r = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/stink/jump.png",33,1,False,2)
+        self.jump_l = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/stink/jump.png",33,1,True,2)
+        self.frame = 0
+        self.lives = 5
+        self.score = 0
+        self.move_x = 0
+        self.move_y = 0
+        self.x_length = x_length
+        self.initial_x = x
+        self.movement_right = True
+        self.speed_walk =  speed_walk
+        self.speed_run =  speed_run
+        self.gravity = gravity
+        self.y_start_jump = 0
+        self.animation = self.stay_r
+        self.direction = DIRECTION_R
+        self.image = self.animation[self.frame]
+        #self.jump_height = (self.image.get_rect().top - self.image.get_rect().bottom) * 2 
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.transcurred_time_move = 0
+        self.transcurred_time_animation = 0
+        self.frame_rate_ms = frame_rate_ms
+        self.move_rate_ms = move_rate_ms
+        #self.rect_ground_col = pygame.Rect(self.rect.x + self.rect.w / 4, self.rect.y + self.rect.h - GROUND_RECT_H, self.rect.w / 2, GROUND_RECT_H)
+       
+       
+    def draw(self,screen):
+        if(DEBUG): 
+            pygame.draw.rect(screen,RED, self.rect)      
+        self.image = self.animation[self.frame]
+        screen.blit(self.image,self.rect)
+        
+    def animate(self, delta_ms):
+        self.transcurred_time_animation += delta_ms
+        if (self.transcurred_time_animation >= self.frame_rate_ms):
+            self.transcurred_time_animation = 0
+            if(self.frame < len(self.animation) - 1):
+                self.frame += 1 
+            else: 
+                self.frame = 0          
+
+    def update(self,delta_ms):
+        self.animate(delta_ms)
+        self.move()    
+        
+    def increment_x(self,delta_x):
+        self.rect.x += delta_x
+
+    def increment_y(self,delta_y):
+        self.rect.y += delta_y
+        
+    def move(self):
+        if self.movement_right:
+            self.increment_x(self.speed_walk)
+            self.animation = self.walk_r
+            if self.rect.x > self.initial_x + self.x_length:
+                self.movement_right = False
+        else:
+            self.increment_x(-self.speed_walk)
+            self.animation = self.walk_l
+            if self.rect.x < self.initial_x - self.x_length:
+                self.movement_right = True
+

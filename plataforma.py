@@ -21,3 +21,4 @@ class Platform:
         if(DEBUG): 
             pygame.draw.rect(screen,RED, self.rect)
             pygame.draw.rect(screen,GREEN,self.rect_ground_col)
+

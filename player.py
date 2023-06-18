@@ -61,15 +61,16 @@ class Player:
             self.is_jump = True      
         if on_off == False:
             self.is_jump = False
-            self.stay()     
+            self.stay(True)     
 
-    def stay(self):
+    def stay(self,post_jump = False):
         if self.animation != self.stay_r and self.animation != self.stay_l:
             if self.direction == DIRECTION_R:
                 self.animation = self.stay_r
             else:
                 self.animation = self.stay_l
-            self.move_x = 0
+            if not post_jump:
+                self.move_x = 0
             self.move_y = 0
             self.frame = 0
             
