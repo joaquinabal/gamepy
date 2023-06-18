@@ -4,7 +4,7 @@ from constantes import *
 from player import Player
 from plataforma import Platform
 from enemigo import Enemy
-
+from proyectile import Proyectile 
 
 screen = pygame.display.set_mode((ANCHO_VENTANA,ALTO_VENTANA))
 pygame.init()
@@ -20,6 +20,8 @@ platform_list.append(Platform(800,450,80,400,2))
 
 enemy_list = []
 enemy_list.append(Enemy(x=630,y=500,speed_walk=2,speed_run=8,gravity=8,frame_rate_ms=30,move_rate_ms=30,x_length=50))
+
+proyectile_list = []
 
 while True:
     for event in pygame.event.get():
@@ -39,6 +41,11 @@ while True:
         if keys[pygame.K_LEFT] and keys[pygame.K_RIGHT] and not keys[pygame.K_SPACE]:
             player_1.stay()
 
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_q:
+                player_1.create_proyectile(proyectile_list,player_1.rect.centerx,player_1.rect.centery)
+                print(proyectile_list)
+
         
         
     delta_ms = clock.tick(FPS)
@@ -53,6 +60,11 @@ while True:
         
     player_1.update(delta_ms, platform_list)
     player_1.draw(screen)
+
+    for proyectile in proyectile_list:
+        proyectile.draw(screen)
+        proyectile.update(enemy_list)
+
     
     # enemigos update
     # player dibujarlo

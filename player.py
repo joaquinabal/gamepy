@@ -2,6 +2,7 @@ from doctest import FAIL_FAST
 import pygame
 from constantes import *
 from auxiliar import Auxiliar
+from proyectile import Proyectile
 
 class Player:
     def __init__(self,x,y,speed_walk,speed_run,gravity,jumping,frame_rate_ms,move_rate_ms,jump_height) -> None:
@@ -125,6 +126,10 @@ class Player:
             pygame.draw.rect(screen,GREEN, self.rect_ground_col)    
         self.image = self.animation[self.frame]
         screen.blit(self.image,self.rect)
+
+    def create_proyectile(self, proyectile_list,x,y):
+        proyectile = Proyectile(5,x,y,self.direction)
+        proyectile_list.append(proyectile)
         
 
 
