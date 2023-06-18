@@ -34,6 +34,7 @@ class Player:
         self.frame_rate_ms = frame_rate_ms
         self.move_rate_ms = move_rate_ms
         self.is_jump = False
+        self.rect_ground_col = pygame.Rect(self.rect.x + self.rect.w / 4, self.rect.y + self.rect.h - GROUND_RECT_H, self.rect.w / 2, GROUND_RECT_H)
 
     def walk(self, direction):
         if self.direction != direction or (self.animation != self.walk_r and self.animation != self.walk_l):
@@ -72,21 +73,38 @@ class Player:
             self.move_y = 0
             self.frame = 0
             
-    def move(self, delta_ms):
+    def move(self, delta_ms,platform_list):
         self.transcurred_time_move += delta_ms
         if (self.transcurred_time_move >= self.move_rate_ms):
             if(abs(self.y_start_jump) - abs(self.rect.y) > self.jump_height and self.is_jump):
                 self.move_y = 0
             self.transcurred_time_move = 0
-            self.rect.x += self.move_x
-            self.rect.y += self.move_y  
-            if(self.rect.y < 500):
-                self.rect.y += self.gravity
+            self.increment_x(self.move_x)
+            self.increment_y(self.move_y)  
+            if(not self.collide_platform(platform_list)):
+                self.increment_y(self.gravity)
             elif self.is_jump: #sacar
                 self.jump(False)
-                
-    
-        
+
+    def collide_platform(self, platform_list): 
+        retorno = False
+        if(self.rect.y >= GROUND_LEVEL): 
+            retorno = True
+        else:
+            for platform in platform_list:
+                if (self.rect_ground_col.colliderect(platform.rect_ground_col)):
+                    retorno = True
+                    break
+        return retorno
+
+    def increment_x(self,delta_x):
+        self.rect.x += delta_x
+        self.rect_ground_col.x += delta_x
+
+    def increment_y(self,delta_y):
+        self.rect.y += delta_y
+        self.rect_ground_col.y += delta_y
+
     def animate(self, delta_ms):
         self.transcurred_time_animation += delta_ms
         if (self.transcurred_time_animation >= self.frame_rate_ms):
@@ -94,16 +112,16 @@ class Player:
             if(self.frame < len(self.animation) - 1):
                 self.frame += 1 
             else: 
-                self.frame = 0
-        
-        
+                self.frame = 0          
 
-
-    def update(self,delta_ms):
-        self.move(delta_ms)
+    def update(self,delta_ms,platform_list):
+        self.move(delta_ms,platform_list)
         self.animate(delta_ms)
         
     def draw(self,screen):
+        if(DEBUG): 
+            pygame.draw.rect(screen,RED, self.rect)     
+            pygame.draw.rect(screen,GREEN, self.rect_ground_col)    
         self.image = self.animation[self.frame]
         screen.blit(self.image,self.rect)
         

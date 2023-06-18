@@ -2,6 +2,8 @@ import pygame
 import sys
 from constantes import *
 from player import Player
+from plataforma import Platform
+
 
 screen = pygame.display.set_mode((ANCHO_VENTANA,ALTO_VENTANA))
 pygame.init()
@@ -9,8 +11,11 @@ clock = pygame.time.Clock()
 
 imagen_fondo = pygame.image.load("images/locations/forest/all.png")
 imagen_fondo = pygame.transform.scale(imagen_fondo,(ANCHO_VENTANA,ALTO_VENTANA))
-player_1 = Player(x=30,y=400,speed_walk=4,speed_run=8,gravity=8,jumping=16, frame_rate_ms=30,move_rate_ms=30,jump_height=200)
+player_1 = Player(x=30,y=500,speed_walk=4,speed_run=8,gravity=8,jumping=16, frame_rate_ms=30,move_rate_ms=30,jump_height=200)
 
+platform_list = []
+platform_list.append(Platform(400,450,80,80,1))
+platform_list.append(Platform(800,450,80,400,2))
 
 while True:
     for event in pygame.event.get():
@@ -25,8 +30,10 @@ while True:
             player_1.walk(DIRECTION_L)
         if not keys[pygame.K_LEFT] and not keys[pygame.K_RIGHT]and not keys[pygame.K_SPACE]:
             player_1.stay()
-        if keys[pygame.K_LEFT] and keys[pygame.K_RIGHT] and not keys[pygame.K_SPACE]:
-            player_1.stay()
+        if keys[pygame.K_RIGHT] and not keys[pygame.K_SPACE]:
+            player_1.walk(DIRECTION_R)
+        if keys[pygame.K_LEFT] and not keys[pygame.K_SPACE]:
+            player_1.walk(DIRECTION_L)
         if keys[pygame.K_SPACE]:
             player_1.jump() 
         
@@ -34,7 +41,10 @@ while True:
     delta_ms = clock.tick(FPS)
     screen.blit(imagen_fondo,imagen_fondo.get_rect())
    
-    player_1.update(delta_ms)
+    for platform in platform_list:
+        platform.draw(screen)
+
+    player_1.update(delta_ms, platform_list)
     player_1.draw(screen)
     
     # enemigos update
