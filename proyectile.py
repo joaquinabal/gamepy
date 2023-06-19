@@ -2,6 +2,7 @@ from doctest import FAIL_FAST
 import pygame
 from constantes import *
 from auxiliar import Auxiliar
+from loot import Loot
 
 class Proyectile:
     def __init__(self,speed,x,y,direction) -> None:
@@ -22,14 +23,16 @@ class Proyectile:
                 self.image = self.sprite_left
         screen.blit(self.image,self.rect)
 
-    def update(self,enemy_list):
+    def update(self,enemy_list,loot_list):
         if self.direction == DIRECTION_L:
             self.rect.x -= self.speed
         else:
             self.rect.x += self.speed
-        self.collide(enemy_list)
+        self.collide(enemy_list,loot_list)
 
-    def collide(self,enemy_list):
+    def collide(self,enemy_list,loot_list):
         for enemy in enemy_list:
             if self.rect.colliderect(enemy.rect):
                 enemy_list.remove(enemy)
+                loot = Loot(enemy.rect.x, enemy.rect.y + self.rect.h - GROUND_RECT_H,20)
+                loot_list.append(loot)

@@ -3,18 +3,17 @@ import pygame
 from constantes import *
 from auxiliar import Auxiliar
 from player import Player
+from loot import Loot
 
 class Enemy():
     def __init__(self,x,y,speed_walk,speed_run,gravity,frame_rate_ms,move_rate_ms, x_length):
-        self.walk_r = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/stink/walk.png",15,1)[:12]
-        self.walk_l = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/stink/walk.png",15,1,True)[:12]
-        self.stay_r = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/stink/idle.png",16,1)
-        self.stay_l = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/stink/idle.png",16,1, True)     
-        self.jump_r = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/stink/jump.png",33,1,False,2)
-        self.jump_l = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/stink/jump.png",33,1,True,2)
+        self.walk_r = Auxiliar.getSurfaceFromSpriteSheet("images/enemies/hunter_walker_walk_r.png",11,1,scale=DEFAULT_ENEMY_SIZE)
+        self.walk_l =  Auxiliar.getSurfaceFromSpriteSheet("images/enemies/hunter_walker_walk_l.png",11,1,scale=DEFAULT_ENEMY_SIZE)
+        self.stay_r = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/stink/idle.png",16,1,scale=DEFAULT_ENEMY_SIZE)
+        self.stay_l = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/stink/idle.png",16,1, True,scale=DEFAULT_ENEMY_SIZE)     
+        self.jump_r = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/stink/jump.png",33,1,False,2,scale=DEFAULT_ENEMY_SIZE)
+        self.jump_l = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/stink/jump.png",33,1,True,2,scale=DEFAULT_ENEMY_SIZE)
         self.frame = 0
-        self.lives = 5
-        self.score = 0
         self.move_x = 0
         self.move_y = 0
         self.x_length = x_length

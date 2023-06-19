@@ -19,9 +19,11 @@ platform_list.append(Platform(400,450,80,80,1))
 platform_list.append(Platform(800,450,80,400,2))
 
 enemy_list = []
-enemy_list.append(Enemy(x=630,y=500,speed_walk=2,speed_run=8,gravity=8,frame_rate_ms=30,move_rate_ms=30,x_length=50))
+enemy_list.append(Enemy(x=630,y=550,speed_walk=1.5,speed_run=8,gravity=8,frame_rate_ms=30,move_rate_ms=30,x_length=120))
 
 proyectile_list = []
+
+loot_list = []
 
 while True:
     for event in pygame.event.get():
@@ -63,7 +65,11 @@ while True:
 
     for proyectile in proyectile_list:
         proyectile.draw(screen)
-        proyectile.update(enemy_list)
+        proyectile.update(enemy_list,loot_list)
+    
+    for loot in loot_list:
+        loot.draw(screen)
+        loot.update()
 
     
     # enemigos update
