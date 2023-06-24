@@ -7,12 +7,12 @@ from loot import Loot
 
 class Enemy():
     def __init__(self,x,y,speed_walk,speed_run,gravity,frame_rate_ms,move_rate_ms, x_length):
-        self.walk_r = Auxiliar.getSurfaceFromSpriteSheet("images/enemies/hunter_walker_walk_r.png",11,1,scale=DEFAULT_ENEMY_SIZE)
-        self.walk_l =  Auxiliar.getSurfaceFromSpriteSheet("images/enemies/hunter_walker_walk_l.png",11,1,scale=DEFAULT_ENEMY_SIZE)
-        self.stay_r = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/stink/idle.png",16,1,scale=DEFAULT_ENEMY_SIZE)
-        self.stay_l = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/stink/idle.png",16,1, True,scale=DEFAULT_ENEMY_SIZE)     
-        self.jump_r = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/stink/jump.png",33,1,False,2,scale=DEFAULT_ENEMY_SIZE)
-        self.jump_l = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/stink/jump.png",33,1,True,2,scale=DEFAULT_ENEMY_SIZE)
+        self.walk_r = Auxiliar.getSurfaceFromSpriteSheet("images/enemies/mushroom_walk_r.png",7,1,scale=DEFAULT_ENEMY_SIZE)
+        self.walk_l =  Auxiliar.getSurfaceFromSpriteSheet("images/enemies/mushroom_walk_l.png",7,1,scale=DEFAULT_ENEMY_SIZE)
+        self.stay_r = Auxiliar.getSurfaceFromSpriteSheet("images/enemies/mushroom_walk_l.png",7,1,scale=DEFAULT_ENEMY_SIZE)
+        self.stay_l = Auxiliar.getSurfaceFromSpriteSheet("images/enemies/mushroom_walk_r.png",7,1, True,scale=DEFAULT_ENEMY_SIZE)     
+        #self.jump_r = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/stink/jump.png",33,1,False,2,scale=DEFAULT_ENEMY_SIZE)
+        #self.jump_l = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/stink/jump.png",33,1,True,2,scale=DEFAULT_ENEMY_SIZE)
         self.frame = 0
         self.move_x = 0
         self.move_y = 0
@@ -28,12 +28,15 @@ class Enemy():
         self.image = self.animation[self.frame]
         #self.jump_height = (self.image.get_rect().top - self.image.get_rect().bottom) * 2 
         self.rect = self.image.get_rect()
-        self.rect.x = x
+        self.rect.x = x 
         self.rect.y = y
+        self.rect.h = self.rect.h / 1.3
+        self.rect.w = self.rect.w 
         self.transcurred_time_move = 0
         self.transcurred_time_animation = 0
         self.frame_rate_ms = frame_rate_ms
         self.move_rate_ms = move_rate_ms
+        self.mask = pygame.mask.from_surface(self.image)
         #self.rect_ground_col = pygame.Rect(self.rect.x + self.rect.w / 4, self.rect.y + self.rect.h - GROUND_RECT_H, self.rect.w / 2, GROUND_RECT_H)
        
        

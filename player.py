@@ -8,17 +8,19 @@ class Player:
     def __init__(self,x,y,speed_walk,speed_run,gravity,jumping,frame_rate_ms,move_rate_ms,jump_height) -> None:
         self.walk_r = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/adventurer/adv_walk_r.png",6,1,scale=3)
         self.walk_l = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/adventurer/adv_walk_l.png",6,1,scale=3)  
-        #self.stay_r = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/stink/idle.png",16,1)
-        self.stay_r = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/adventurer/adv_stay_r.png",4,1,scale=3)
-        self.stay_l = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/adventurer/adv_stay_l.png",4,1,scale=3)  
+        self.stay_r = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/adventurer/adv_stay_r.png",3,1,scale=3)
+        self.stay_l = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/adventurer/adv_stay_l.png",3,1,scale=3)  
         self.jump_r = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/adventurer/adv_jump_r.png",15,1,scale=3)  
         self.jump_l = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/adventurer/adv_jump_l.png",15,1,scale=3)  
-        self.atk_stance_r = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/adventurer/adv_atk_stance_r.png",6,1,scale=3)  
-        self.atk_stance_l = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/adventurer/adv_atk_stance_l.png",6,1,scale=3) 
+        self.atk_stance_r = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/adventurer/adv_atk_stance_r.png",5,1,scale=3)  
+        self.atk_stance_l = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/adventurer/adv_atk_stance_l.png",5,1,scale=3) 
         self.charge_r = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/adventurer/adv_charge_r.png",1,1,scale=3)  
         self.charge_l = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/adventurer/adv_charge_l.png",1,1,scale=3)   
         self.atk_r = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/adventurer/adv_atk_r.png",2,1,scale=3)  
-        self.atk_l = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/adventurer/adv_atk_l.png",2,1,scale=3)     
+        self.atk_l = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/adventurer/adv_atk_l.png",2,1,scale=3)    
+        self.hurt_r = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/adventurer/adv_hurt_r.png",3,1,scale=3)  
+        self.hurt_l = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/adventurer/adv_hurt_l.png",3,1,scale=3) 
+        self.colliding_enemy_flag = False
         self.frame = 0
         self.lives = 5
         self.score = 0
@@ -26,6 +28,7 @@ class Player:
         self.move_y = 0
         self.speed_walk =  speed_walk
         self.speed_run =  speed_run
+        self.speed_hurted = 100
         self.gravity = gravity
         self.jumping = jumping 
         self.jump_height = jump_height
@@ -34,7 +37,7 @@ class Player:
         self.direction = DIRECTION_R
         self.image = self.animation[self.frame]
         #self.jump_height = (self.image.get_rect().top - self.image.get_rect().bottom) * 2 
-        self.rect = self.image.get_rect()
+        self.rect = self.image.get_rect(center=(100, 100))
         self.rect.x = x
         self.rect.y = y
         self.transcurred_time_move = 0
@@ -63,6 +66,20 @@ class Player:
                 self.animation = self.jump_l
             else:
                 self.animation = self.walk_l
+            
+    def jump_vertical(self,on_off = True):
+        if on_off and self.is_jump == False:
+            self.y_start_jump = self.rect.y
+            if self.direction == DIRECTION_R:
+                self.animation = self.jump_r
+            else:
+                self.animation = self.jump_l
+            self.move_y = -self.jumping
+            self.frame = 0
+            self.is_jump = True      
+        if on_off == False:
+            self.is_jump = False
+            self.stay(True)                   
             
     def jump(self,on_off = True):
         if on_off and self.is_jump == False:
@@ -114,6 +131,21 @@ class Player:
                     retorno = True
                     break
         return retorno
+    
+    def colllide_enemy(self, enemy_list):
+        for enemy in enemy_list:
+            if self.rect.colliderect(enemy.rect):
+                self.colliding_enemy_flag = True
+                if self.colliding_enemy_flag:
+                    self.be_hurted()
+                    self.lives -= 1
+                    print(self.lives)
+                    self.colliding_enemy_flag = False
+            else:
+                self.colliding_enemy_flag = False
+
+
+                
 
     def increment_x(self,delta_x):
         self.rect.x += delta_x
@@ -132,9 +164,10 @@ class Player:
             else: 
                 self.frame = 0          
 
-    def update(self,delta_ms,platform_list):
+    def update(self,delta_ms,platform_list,enemy_list):
         self.move(delta_ms,platform_list)
         self.animate(delta_ms)
+        self.colllide_enemy(enemy_list)
         if (self.animation == self.atk_l or self.animation == self.atk_r) and self.timer(100):
             self.stay()
         
@@ -156,15 +189,21 @@ class Player:
         proyectile_list.append(proyectile)
        # tiempo_actual = pygame.time.get_ticks()
         
+
+            
+
     def timer(self, tiempo_obj):
             if self.atk_stance_flag == False:
                 self.tiempo_transcurrido = pygame.time.get_ticks()
                 self.atk_stance_flag = True
+            print(self.atk_stance_flag)
             tiempo_actual = pygame.time.get_ticks()
             if tiempo_actual - self.tiempo_transcurrido >= tiempo_obj:
                 return True
             else:
                 return False
+
+
 
     def charge_attack(self):
         if self.direction == DIRECTION_R:
@@ -177,5 +216,11 @@ class Player:
             self.animation = self.atk_r
         else:
             self.animation = self.atk_l
-        self.atk_stance_flag = False
-        return True
+
+    def be_hurted(self):
+        if self.direction == DIRECTION_R:
+            self.rect.x -= self.speed_hurted
+            self.animation = self.hurt_r
+        else:
+            self.rect.x = self.speed_hurted
+            self.animation = self.hurt_l

@@ -20,7 +20,7 @@ class Proyectile:
     def draw(self,screen):
         if(DEBUG): 
             pygame.draw.rect(screen,RED, self.rect)     
-            pygame.draw.rect(screen,GREEN, self.rect_ground_col)
+            #pygame.draw.rect(screen,GREEN, self.rect_ground_col)
         if self.direction == DIRECTION_L:
                 self.image = self.sprite_left
         screen.blit(self.image,self.rect)
@@ -36,8 +36,9 @@ class Proyectile:
         for enemy in enemy_list:
             if self.rect.colliderect(enemy.rect):
                 enemy_list.remove(enemy)
-                loot = Loot(enemy.rect.x, enemy.rect.y + self.rect.h - GROUND_RECT_H,20)
-                loot_list.append(loot)           
+                loot = Loot(enemy.rect.x, enemy.rect.bottom,10)
+                loot_list.append(loot)      
+                 
                  
     def timer(self):
             tiempo_actual = pygame.time.get_ticks()

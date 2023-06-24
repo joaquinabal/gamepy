@@ -6,15 +6,8 @@ from plataforma import Platform
 from enemigo import Enemy
 from proyectile import Proyectile 
 
-def is_jumping_anim(player):
-    if player.animation == player.jump_r:
-        print("salta R")
-    elif player.animation == player.jump_l:
-        print("salta L")
-    else:
-        print("wtf")
-
 unpressed_flag = True
+contador_charge = 0
 
 screen = pygame.display.set_mode((ANCHO_VENTANA,ALTO_VENTANA))
 pygame.init()
@@ -22,14 +15,15 @@ clock = pygame.time.Clock()
 
 imagen_fondo = pygame.image.load("images/locations/forest/forest.png")
 imagen_fondo = pygame.transform.scale(imagen_fondo,(ANCHO_VENTANA,ALTO_VENTANA))
-player_1 = Player(x=30,y=GROUND_LEVEL,speed_walk=8,speed_run=8,gravity=8,jumping=27, frame_rate_ms=100,move_rate_ms=80,jump_height=120)
+player_1 = Player(x=30,y=GROUND_LEVEL,speed_walk=10,speed_run=10,gravity=20,jumping=40, frame_rate_ms=100,move_rate_ms=45,jump_height=100)
 
 platform_list = []
 platform_list.append(Platform(400,570,50,200,"images/tiles/0.png"))
 platform_list.append(Platform(800,570,50,200,"images/tiles/1.png"))
 
 enemy_list = []
-enemy_list.append(Enemy(x=630,y=GROUND_LEVEL,speed_walk=1.5,speed_run=8,gravity=8,frame_rate_ms=30,move_rate_ms=30,x_length=120))
+enemy_list.append(Enemy(x=870,y=500,speed_walk=1.5,speed_run=8,gravity=8,frame_rate_ms=80,move_rate_ms=80,x_length=60))
+enemy_list.append(Enemy(x=630,y=GROUND_LEVEL+20,speed_walk=1.5,speed_run=8,gravity=8,frame_rate_ms=80,move_rate_ms=80,x_length=120))
 
 proyectile_list = []
 
@@ -50,33 +44,32 @@ while True:
         if keys[pygame.K_LEFT] and not keys[pygame.K_RIGHT]:
             if not player_1.is_jump:
                 player_1.walk(DIRECTION_L)
+        if keys[pygame.K_SPACE] and not keys[pygame.K_LEFT] and not keys[pygame.K_RIGHT]:
+             player_1.jump_vertical()
         if keys[pygame.K_SPACE]:
             player_1.jump()
-            is_jumping_anim(player_1)
         if not keys[pygame.K_LEFT] and not keys[pygame.K_RIGHT]and not keys[pygame.K_SPACE]:
             player_1.stay()
         if keys[pygame.K_LEFT] and keys[pygame.K_RIGHT] and not keys[pygame.K_SPACE]:
-            player_1.stay()
-            
+            player_1.stay()           
             
         if keys[pygame.K_q]:
             player_1.atk_stance()
             if player_1.timer(500):
                 unpressed_flag = False
-                player_1.charge_attack()
-        if not unpressed_flag:    
-            if event.type == pygame.KEYUP:
-                if event.key == pygame.K_q:          
+                player_1.charge_attack() 
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_q:   
+                print(player_1.atk_stance_flag)       
+                if not unpressed_flag:   
                     player_1.attack()
-                    player_1.create_proyectile(proyectile_list,player_1.rect.centerx,player_1.rect.centery)
+                    if player_1.direction == DIRECTION_R:
+                        player_1.create_proyectile(proyectile_list,player_1.rect.right,player_1.rect.centery)
+                    else:
+                        player_1.create_proyectile(proyectile_list,player_1.rect.left,player_1.rect.centery)    
                     unpressed_flag = True
+                player_1.atk_stance_flag = False
 
-        
-        '''if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_q:
-                player_1.create_proyectile(proyectile_list,player_1.rect.centerx,player_1.rect.centery)
-                print(proyectile_list)
-'''
         
         
     delta_ms = clock.tick(FPS)
@@ -89,7 +82,7 @@ while True:
         enemy.draw(screen)
         enemy.update(delta_ms)
         
-    player_1.update(delta_ms, platform_list)
+    player_1.update(delta_ms, platform_list,enemy_list)
     player_1.draw(screen)
 
     for proyectile in proyectile_list:

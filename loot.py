@@ -19,7 +19,7 @@ class Loot:
     def draw(self,screen):
         if(DEBUG): 
             pygame.draw.rect(screen,RED, self.rect)     
-            pygame.draw.rect(screen,GREEN, self.rect_ground_col)
+            #pygame.draw.rect(screen,GREEN, self.rect_ground_col)
         screen.blit(self.image,self.rect)
 
     def collide(self,player_1):
@@ -39,5 +39,5 @@ class Loot:
                 self.movement_up = False
         else:
             self.increment_y(-self.speed)
-            if self.rect.y > self.initial_y - self.y_length:
+            if self.rect.y < self.initial_y - self.y_length:
                 self.movement_up = True
