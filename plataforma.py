@@ -4,8 +4,8 @@ from auxiliar import Auxiliar
 
 
 class Platform:
-    def __init__(self,x,y,height,width,type=0):
-        self.image = Auxiliar.getSurfaceFromSpriteSheet("images/tiles/tileset01.png",13,13)[type]
+    def __init__(self,x,y,height,width,image,type=0):
+        self.image = Auxiliar.getSurfaceFromSpriteSheet(image,1,1)[type]
         self.image = pygame.transform.scale(self.image, (width, height))
         self.height = height
         self.width = width
@@ -21,4 +21,5 @@ class Platform:
         if(DEBUG): 
             pygame.draw.rect(screen,RED, self.rect)
             pygame.draw.rect(screen,GREEN,self.rect_ground_col)
+
 

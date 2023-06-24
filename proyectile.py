@@ -14,6 +14,8 @@ class Proyectile:
         self.rect.y = y
         self.speed = speed
         self.direction = direction
+        self.tiempo_transcurrido = 0
+        self.tiempo_objetivo = 500
 
     def draw(self,screen):
         if(DEBUG): 
@@ -35,4 +37,11 @@ class Proyectile:
             if self.rect.colliderect(enemy.rect):
                 enemy_list.remove(enemy)
                 loot = Loot(enemy.rect.x, enemy.rect.y + self.rect.h - GROUND_RECT_H,20)
-                loot_list.append(loot)
+                loot_list.append(loot)           
+                 
+    def timer(self):
+            tiempo_actual = pygame.time.get_ticks()
+            if tiempo_actual - self.tiempo_transcurrido >= self.tiempo_objetivo:
+                return True
+            else:
+                return False

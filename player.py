@@ -6,12 +6,19 @@ from proyectile import Proyectile
 
 class Player:
     def __init__(self,x,y,speed_walk,speed_run,gravity,jumping,frame_rate_ms,move_rate_ms,jump_height) -> None:
-        self.walk_r = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/stink/walk.png",15,1)[:12]
-        self.walk_l = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/stink/walk.png",15,1,True)[:12]
-        self.stay_r = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/stink/idle.png",16,1)
-        self.stay_l = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/stink/idle.png",16,1, True)     
-        self.jump_r = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/stink/jump.png",33,1,False,2)
-        self.jump_l = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/stink/jump.png",33,1,True,2)
+        self.walk_r = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/adventurer/adv_walk_r.png",6,1,scale=3)
+        self.walk_l = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/adventurer/adv_walk_l.png",6,1,scale=3)  
+        #self.stay_r = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/stink/idle.png",16,1)
+        self.stay_r = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/adventurer/adv_stay_r.png",4,1,scale=3)
+        self.stay_l = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/adventurer/adv_stay_l.png",4,1,scale=3)  
+        self.jump_r = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/adventurer/adv_jump_r.png",15,1,scale=3)  
+        self.jump_l = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/adventurer/adv_jump_l.png",15,1,scale=3)  
+        self.atk_stance_r = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/adventurer/adv_atk_stance_r.png",6,1,scale=3)  
+        self.atk_stance_l = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/adventurer/adv_atk_stance_l.png",6,1,scale=3) 
+        self.charge_r = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/adventurer/adv_charge_r.png",1,1,scale=3)  
+        self.charge_l = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/adventurer/adv_charge_l.png",1,1,scale=3)   
+        self.atk_r = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/adventurer/adv_atk_r.png",2,1,scale=3)  
+        self.atk_l = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/adventurer/adv_atk_l.png",2,1,scale=3)     
         self.frame = 0
         self.lives = 5
         self.score = 0
@@ -36,6 +43,9 @@ class Player:
         self.move_rate_ms = move_rate_ms
         self.is_jump = False
         self.rect_ground_col = pygame.Rect(self.rect.x + self.rect.w / 4, self.rect.y + self.rect.h - GROUND_RECT_H, self.rect.w / 2, GROUND_RECT_H)
+        self.tiempo_objetivo = 500
+        self.atk_stance_flag = False
+        self.tiempo_transcurrido = 0
 
     def walk(self, direction):
         if self.direction != direction or (self.animation != self.walk_r and self.animation != self.walk_l):
@@ -43,10 +53,16 @@ class Player:
         self.direction = direction
         if direction == DIRECTION_R:
             self.move_x = self.speed_walk
-            self.animation = self.walk_r
+            if self.is_jump:
+                self.animation = self.jump_r
+            else:
+                self.animation = self.walk_r
         else:
             self.move_x = -self.speed_walk
-            self.animation = self.walk_l
+            if self.is_jump:
+                self.animation = self.jump_l
+            else:
+                self.animation = self.walk_l
             
     def jump(self,on_off = True):
         if on_off and self.is_jump == False:
@@ -119,6 +135,8 @@ class Player:
     def update(self,delta_ms,platform_list):
         self.move(delta_ms,platform_list)
         self.animate(delta_ms)
+        if (self.animation == self.atk_l or self.animation == self.atk_r) and self.timer(100):
+            self.stay()
         
     def draw(self,screen):
         if(DEBUG): 
@@ -127,9 +145,37 @@ class Player:
         self.image = self.animation[self.frame]
         screen.blit(self.image,self.rect)
 
+    def atk_stance(self):
+        if self.direction == DIRECTION_R:
+            self.animation = self.atk_stance_r
+        else:
+            self.animation = self.atk_stance_l
+
     def create_proyectile(self, proyectile_list,x,y):
-        proyectile = Proyectile(5,x,y,self.direction)
+        proyectile = Proyectile(5,x,y,self.direction) 
         proyectile_list.append(proyectile)
+       # tiempo_actual = pygame.time.get_ticks()
         
+    def timer(self, tiempo_obj):
+            if self.atk_stance_flag == False:
+                self.tiempo_transcurrido = pygame.time.get_ticks()
+                self.atk_stance_flag = True
+            tiempo_actual = pygame.time.get_ticks()
+            if tiempo_actual - self.tiempo_transcurrido >= tiempo_obj:
+                return True
+            else:
+                return False
 
+    def charge_attack(self):
+        if self.direction == DIRECTION_R:
+            self.animation = self.charge_r
+        else:
+            self.animation = self.charge_l        
 
+    def attack(self):
+        if self.direction == DIRECTION_R:
+            self.animation = self.atk_r
+        else:
+            self.animation = self.atk_l
+        self.atk_stance_flag = False
+        return True
