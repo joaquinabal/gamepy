@@ -28,7 +28,7 @@ class Player:
         self.move_y = 0
         self.speed_walk =  speed_walk
         self.speed_run =  speed_run
-        self.speed_hurted = 100
+        #self.speed_hurted = 100
         self.gravity = gravity
         self.jumping = jumping 
         self.jump_height = jump_height
@@ -49,6 +49,7 @@ class Player:
         self.tiempo_objetivo = 500
         self.atk_stance_flag = False
         self.tiempo_transcurrido = 0
+        self.lives_font = pygame.font.Font(None, 32)
 
     def walk(self, direction):
         if self.direction != direction or (self.animation != self.walk_r and self.animation != self.walk_l):
@@ -133,20 +134,21 @@ class Player:
         return retorno
     
     def colllide_enemy(self, enemy_list):
+        collision_detected = False  # Bandera para indicar si se detectó una colisión con algún enemigo   
         for enemy in enemy_list:
             if self.rect.colliderect(enemy.rect):
-                self.colliding_enemy_flag = True
-                if self.colliding_enemy_flag:
-                    self.be_hurted()
-                    self.lives -= 1
-                    print(self.lives)
-                    self.colliding_enemy_flag = False
-            else:
-                self.colliding_enemy_flag = False
-
-
-                
-
+                collision_detected = True
+                break  # Si hay una colisión, no es necesario verificar los otros enemigos
+        if collision_detected:
+            if not self.colliding_enemy_flag:  # Verifica si ya estás colisionando con un enemigo
+                self.be_hurted()
+                self.lives -= 1
+                print(self.lives)
+                self.colliding_enemy_flag = True  # Establece la bandera para indicar que estás colisionando con un enemigo
+        else:
+            self.colliding_enemy_flag = False
+            
+            
     def increment_x(self,delta_x):
         self.rect.x += delta_x
         self.rect_ground_col.x += delta_x
@@ -177,6 +179,7 @@ class Player:
             pygame.draw.rect(screen,GREEN, self.rect_ground_col)    
         self.image = self.animation[self.frame]
         screen.blit(self.image,self.rect)
+        screen.blit(self.show_lives(), LIVES_POSITION)
 
     def atk_stance(self):
         if self.direction == DIRECTION_R:
@@ -189,9 +192,6 @@ class Player:
         proyectile_list.append(proyectile)
        # tiempo_actual = pygame.time.get_ticks()
         
-
-            
-
     def timer(self, tiempo_obj):
             if self.atk_stance_flag == False:
                 self.tiempo_transcurrido = pygame.time.get_ticks()
@@ -203,7 +203,9 @@ class Player:
             else:
                 return False
 
-
+    def show_lives(self):
+        lives_count = self.lives_font.render('LIVES: {0}'.format(self.lives), True, TEXTCOLOUR, None)
+        return lives_count
 
     def charge_attack(self):
         if self.direction == DIRECTION_R:
@@ -218,9 +220,9 @@ class Player:
             self.animation = self.atk_l
 
     def be_hurted(self):
+        pass
+        '''CHEQUEAR 
         if self.direction == DIRECTION_R:
-            self.rect.x -= self.speed_hurted
             self.animation = self.hurt_r
         else:
-            self.rect.x = self.speed_hurted
-            self.animation = self.hurt_l
+            self.animation = self.hurt_l'''

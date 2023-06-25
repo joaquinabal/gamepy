@@ -6,11 +6,20 @@ from player import Player
 from loot import Loot
 
 class Enemy():
-    def __init__(self,x,y,speed_walk,speed_run,gravity,frame_rate_ms,move_rate_ms, x_length):
-        self.walk_r = Auxiliar.getSurfaceFromSpriteSheet("images/enemies/mushroom_walk_r.png",7,1,scale=DEFAULT_ENEMY_SIZE)
-        self.walk_l =  Auxiliar.getSurfaceFromSpriteSheet("images/enemies/mushroom_walk_l.png",7,1,scale=DEFAULT_ENEMY_SIZE)
-        self.stay_r = Auxiliar.getSurfaceFromSpriteSheet("images/enemies/mushroom_walk_l.png",7,1,scale=DEFAULT_ENEMY_SIZE)
-        self.stay_l = Auxiliar.getSurfaceFromSpriteSheet("images/enemies/mushroom_walk_r.png",7,1, True,scale=DEFAULT_ENEMY_SIZE)     
+    def __init__(self,x,y,speed_walk,speed_run,gravity,frame_rate_ms,move_rate_ms, x_length, enemy_type):
+        self.enemy_type = enemy_type
+        
+        if enemy_type == 0: #MUSHROOM
+            self.walk_r = Auxiliar.getSurfaceFromSpriteSheet("images/enemies/mushroom_walk_r.png",7,1,scale=DEFAULT_ENEMY_SIZE)
+            self.walk_l =  Auxiliar.getSurfaceFromSpriteSheet("images/enemies/mushroom_walk_l.png",7,1,scale=DEFAULT_ENEMY_SIZE)
+            self.stay_r = Auxiliar.getSurfaceFromSpriteSheet("images/enemies/mushroom_walk_l.png",7,1,scale=DEFAULT_ENEMY_SIZE)
+            self.stay_l = Auxiliar.getSurfaceFromSpriteSheet("images/enemies/mushroom_walk_r.png",7,1,scale=DEFAULT_ENEMY_SIZE)
+            
+        elif enemy_type == 1: #ONEYE
+            self.walk_r = Auxiliar.getSurfaceFromSpriteSheet("images/enemies/oneye_walk_r.png",8,1,scale=DEFAULT_ENEMY_SIZE)
+            self.walk_l =  Auxiliar.getSurfaceFromSpriteSheet("images/enemies/oneye_walk_l.png",8,1,scale=DEFAULT_ENEMY_SIZE)
+            self.stay_r = Auxiliar.getSurfaceFromSpriteSheet("images/enemies/oneye_walk_l.png",8,1,scale=DEFAULT_ENEMY_SIZE)
+            self.stay_l = Auxiliar.getSurfaceFromSpriteSheet("images/enemies/oneye_walk_r.png",8,1,scale=DEFAULT_ENEMY_SIZE)                    
         #self.jump_r = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/stink/jump.png",33,1,False,2,scale=DEFAULT_ENEMY_SIZE)
         #self.jump_l = Auxiliar.getSurfaceFromSpriteSheet("images/caracters/stink/jump.png",33,1,True,2,scale=DEFAULT_ENEMY_SIZE)
         self.frame = 0
@@ -37,7 +46,7 @@ class Enemy():
         self.frame_rate_ms = frame_rate_ms
         self.move_rate_ms = move_rate_ms
         self.mask = pygame.mask.from_surface(self.image)
-        #self.rect_ground_col = pygame.Rect(self.rect.x + self.rect.w / 4, self.rect.y + self.rect.h - GROUND_RECT_H, self.rect.w / 2, GROUND_RECT_H)
+        self.rect_ground_col = pygame.Rect(self.rect.x + self.rect.w / 4, self.rect.y + self.rect.h - GROUND_RECT_H, self.rect.w / 2, GROUND_RECT_H)
        
        
     def draw(self,screen):

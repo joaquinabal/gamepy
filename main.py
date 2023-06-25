@@ -10,6 +10,7 @@ unpressed_flag = True
 contador_charge = 0
 
 screen = pygame.display.set_mode((ANCHO_VENTANA,ALTO_VENTANA))
+
 pygame.init()
 clock = pygame.time.Clock()
 
@@ -22,8 +23,9 @@ platform_list.append(Platform(400,570,50,200,"images/tiles/0.png"))
 platform_list.append(Platform(800,570,50,200,"images/tiles/1.png"))
 
 enemy_list = []
-enemy_list.append(Enemy(x=870,y=500,speed_walk=1.5,speed_run=8,gravity=8,frame_rate_ms=80,move_rate_ms=80,x_length=60))
-enemy_list.append(Enemy(x=630,y=GROUND_LEVEL+20,speed_walk=1.5,speed_run=8,gravity=8,frame_rate_ms=80,move_rate_ms=80,x_length=120))
+enemy_list.append(Enemy(x=870,y=500,speed_walk=1.5,speed_run=8,gravity=8,frame_rate_ms=80,move_rate_ms=80,x_length=60, enemy_type=0))
+enemy_list.append(Enemy(x=630,y=GROUND_LEVEL+20,speed_walk=1.5,speed_run=8,gravity=8,frame_rate_ms=80,move_rate_ms=80,x_length=120, enemy_type=0))
+enemy_list.append(Enemy(x=870,y=200,speed_walk=2,speed_run=8,gravity=8,frame_rate_ms=80,move_rate_ms=80,x_length=150, enemy_type=1))
 
 proyectile_list = []
 
